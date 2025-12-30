@@ -25,7 +25,10 @@ const LoginPage = () => {
       setToken(data.token);
       setLogin(true);
       setUser(data.user);
-
+      setFormData({
+        name: "",
+        password: ""
+      });
       if (data.user.role !== "admin") {
         alert("Access denied. Only admins can log in.");
         return;

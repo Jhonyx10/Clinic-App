@@ -1,6 +1,40 @@
 import { motion, AnimatePresence } from "motion/react";
+import useAppStore from '../store/useAppStore';
+import { useState } from "react";
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { create } from "../util/userApi";
 
 const AccountForm = ({ onClose }) => {
+    const { token } = useAppStore();
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        password: ""
+    });
+    const qc = useQueryClient();
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const Create = useMutation({
+        mutationFn: ({formData, token}) => create({formData, token}),
+        onSuccess: (data) => {
+            alert('success');
+            onClose();
+            qc.invalidateQueries(queryKey['doctors'])
+        },
+        onError: (error) => {
+            console.log(error)
+        }
+    });
+    
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        Create.mutate({formData, token});
+    }
+
   const overlayVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { duration: 0.3 } },
@@ -43,6 +77,7 @@ const AccountForm = ({ onClose }) => {
             Doctor's Account
           </h2>
           <motion.form
+            onSubmit={handleSubmit}
             className="space-y-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -54,6 +89,9 @@ const AccountForm = ({ onClose }) => {
               </label>
               <input
                 type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
                 placeholder="Enter username"
                 className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
               />
@@ -64,6 +102,9 @@ const AccountForm = ({ onClose }) => {
               </label>
               <input
                 type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
                 placeholder="doctor@email.com"
                 className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
               />
@@ -74,6 +115,9 @@ const AccountForm = ({ onClose }) => {
               </label>
               <input
                 type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
                 placeholder="••••••••"
                 className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
               />
@@ -90,7 +134,7 @@ const AccountForm = ({ onClose }) => {
                 type="submit"
                 className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 transition"
               >
-                Save Account
+                {Create.isPending ? "Saving..." : "Save Account"}
               </button>
             </div>
           </motion.form>

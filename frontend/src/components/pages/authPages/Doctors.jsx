@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { useState } from "react";
 import AccountForm from "../../forms/CreateAccount";
+import DoctorsCard from "../../cards/Doctors";
 import { MagnifyingGlassIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
 
 const Doctors = () => {
@@ -38,6 +39,7 @@ const Doctors = () => {
             <span className="text-sm text-gray-100 font-bold">Account</span>
           </motion.button>
         </div>
+        <DoctorsCard/>
       </motion.div>
       {modalOpen && (
         <AccountForm onClose={() => setModalOpen(false)}/>

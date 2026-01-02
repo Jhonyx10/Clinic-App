@@ -42,9 +42,9 @@ const TopNav = ({ navItems }) => {
       <div className="relative">
         <button
           onClick={() => setIsProfileOpen(!isProfileOpen)}
-          className="flex items-center space-x-2 bg-slate-100 px-3 py-2 rounded-lg hover:bg-slate-200 transition"
+          className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-slate-200 transition"
         >
-          <span>Admin</span>
+          <span className="font-bold text-lg">{user?.name}</span>
           <div className="w-8 h-8 bg-red-500 rounded-full text-white flex items-center justify-center font-semibold">
             {user?.role === "admin" ? "A" : "D"}
           </div>

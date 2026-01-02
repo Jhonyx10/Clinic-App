@@ -29,10 +29,6 @@ const LoginPage = () => {
         name: "",
         password: ""
       });
-      if (data.user.role !== "admin") {
-        alert("Access denied. Only admins can log in.");
-        return;
-      }
     navigate("/dashboard");
     },
     onError: (err) => {

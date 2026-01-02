@@ -13,11 +13,17 @@ import {
 } from "@heroicons/react/24/outline";
 
 const SideNav = ({ navItems }) => {
-  const { open, setOpen } = useAppStore();
+  const { open, setOpen, user } = useAppStore();
   const location = useLocation();
 
+  // Filter out "Doctors" page if user is a doctor
+  const filteredNavItems =
+    user.role === "doctor"
+      ? navItems.filter((item) => item.name !== "Doctors")
+      : navItems;
+
   // Map nav items with icons
-  const navWithIcons = navItems.map((item) => {
+  const navWithIcons = filteredNavItems.map((item) => {
     let icon;
     switch (item.name) {
       case "Dashboard":

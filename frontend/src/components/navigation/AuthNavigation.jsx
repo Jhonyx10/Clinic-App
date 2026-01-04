@@ -15,6 +15,8 @@ import Dashboard from "../pages/authPages/Dashboard";
 import Appointments from "../pages/authPages/Appointments";
 import Doctors from "../pages/authPages/Doctors";
 import Patients from "../pages/authPages/Patients";
+import Profile from "../pages/authPages/Profile";
+import DoctorsLeave from "../pages/authPages/DoctorsLeave";
 
 // Protects authenticated routes
 const ProtectedRoute = ({ children }) => {
@@ -66,6 +68,8 @@ const AnimatedRoutes = () => {
           <Route path="/appointments" element={<Appointments />} />
           <Route path="/doctors" element={<Doctors />} />
           <Route path="/patients" element={<Patients />} />
+          <Route path="/profile" element={<Profile/>} />
+          <Route path="/doctors/leave" element={<DoctorsLeave/>} />
           {/* Add other protected routes here */}
         </Route>
 

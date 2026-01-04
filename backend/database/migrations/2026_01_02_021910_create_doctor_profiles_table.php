@@ -20,8 +20,9 @@ return new class extends Migration
             $table->integer('age');
             $table->enum('gender',['male','female']);
             $table->string('specialization');
-            $table->boolean('availability');
+            $table->boolean('availability')->default(1);
             $table->integer('consultation_fee');
+            $table->string('photo')->nullable();
             $table->timestamps();
         });
     }

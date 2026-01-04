@@ -18,7 +18,8 @@ class DoctorProfile extends Model
          'gender', 
          'specialization', 
          'availability', 
-         'consultation_fee'
+         'consultation_fee',
+         'photo'
     ];
 
     public function user()

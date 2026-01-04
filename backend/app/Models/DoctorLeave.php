@@ -17,7 +17,7 @@ class DoctorLeave extends Model
         'status',
     ];
 
-    public function doctor()
+    public function user()
     {
         return $this->belongsTo(User::class, 'doctor_id');
     }

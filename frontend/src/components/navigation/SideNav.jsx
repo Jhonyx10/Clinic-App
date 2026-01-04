@@ -9,7 +9,7 @@ import {
   CalendarIcon,
   UserGroupIcon,
   UserIcon,
-  Cog6ToothIcon,
+  FolderArrowDownIcon
 } from "@heroicons/react/24/outline";
 
 const SideNav = ({ navItems }) => {
@@ -38,8 +38,8 @@ const SideNav = ({ navItems }) => {
       case "Patients":
         icon = <UserIcon className="w-5 h-5 mr-3 text-red-500" />;
         break;
-      case "Settings":
-        icon = <Cog6ToothIcon className="w-5 h-5 mr-3 text-red-500" />;
+      case "Doctor's Leave":
+        icon = <FolderArrowDownIcon className="w-5 h-5 mr-3 text-red-500" />;
         break;
       default:
         icon = null;

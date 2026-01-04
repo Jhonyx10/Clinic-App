@@ -9,7 +9,7 @@ const navItems = [
   { name: "Appointments", path: "/appointments" },
   { name: "Doctors", path: "/doctors" },
   { name: "Patients", path: "/patients" },
-  { name: "Settings", path: "/settings" },
+  { name: "Doctor's Leave", path: "/doctors/leave" },
 ];
 
 const Layout = () => {

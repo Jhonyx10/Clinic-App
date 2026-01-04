@@ -11,7 +11,7 @@ const TopNav = ({ navItems }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const currentNav = navItems.find((item) => item.path === location.pathname);
-  const pageTitle = currentNav ? currentNav.name : "";
+  const pageTitle = currentNav ? currentNav.name : "Profile";
 
   const Logout = useMutation({
     mutationFn: (token) => logout(token),

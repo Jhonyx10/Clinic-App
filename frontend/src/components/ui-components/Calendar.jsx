@@ -18,7 +18,7 @@ const localizer = dateFnsLocalizer({
 });
 
 const Calendar = () => {
-  const { token } = useAppStore();
+  const { token, user } = useAppStore();
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
@@ -27,24 +27,36 @@ const Calendar = () => {
     queryFn: () => appointments(token),
   });
 
-  useEffect(() => {
-    if (data) {
-      const mappedEvents = data?.appointments?.map((item) => {
-        const start = new Date(
-          `${item.appointment_date}T${item.appointment_time}`
-        );
-        const end = addHours(start, 1); // assuming 1-hour appointments
-        return {
-          id: item.id,
-          title: `${item.doctor.name} - ${item.reason}`,
-          start,
-          end,
-          raw: item,
-        };
-      });
-      setEvents(mappedEvents);
+useEffect(() => {
+  if (!data?.appointments) return;
+
+  // 🔹 ROLE-BASED FILTER
+  const filteredAppointments = data.appointments.filter((item) => {
+    if (user.role === "admin") return true;
+
+    if (user.role === "doctor") {
+      return item.doctor_id === user.id;
     }
-  }, [data]);
+  });
+
+  const mappedEvents = filteredAppointments.map((item) => {
+    const start = new Date(`${item.appointment_date}T${item.appointment_time}`);
+    const end = addHours(start, 1);
+
+    return {
+      id: item.id,
+      title:
+        user.role === "doctor"
+          ? `Patient: ${item.patient?.name} - ${item.reason}`
+          : `${item.doctor?.name ?? "Doctor"} - ${item.reason}`,
+      start,
+      end,
+      raw: item,
+    };
+  });
+
+  setEvents(mappedEvents);
+}, [data, user]);
 
   const handleSelectEvent = (event) => {
     setSelectedEvent(event.raw); // store full appointment data

@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import Calendar from "../../ui-components/Calendar";
+import { useState } from "react";
 const Appointments = () => {
   return (
     <motion.div
@@ -16,7 +17,7 @@ const Appointments = () => {
         transition={{ duration: 0.4 }}
         className="mt-10"
       >
-        <Calendar/>
+        <Calendar />
       </motion.div>
     </motion.div>
   );

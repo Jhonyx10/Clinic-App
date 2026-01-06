@@ -2,125 +2,194 @@ import { motion, AnimatePresence } from "motion/react";
 import useAppStore from "../store/useAppStore";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { create } from "../util/userApi";
+import { AdminProfile, DoctorProfile } from "../util/profileApi";
 
-const AccountForm = ({ onClose }) => {
-  const { token } = useAppStore();
+const ProfileSettings = ({ onClose }) => {
+  const { token, user } = useAppStore();
+  const isDoctor = user?.role === "doctor";
+
   const [formData, setFormData] = useState({
     fname: "",
     mname: "",
     lname: "",
     age: "",
     gender: "",
+    address: "",
+    contact_number: "",
     specialization: "",
+    consultation_fee: "",
+    photo: null,
   });
-  const qc = useQueryClient();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const overlayVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 0.3 } },
-    exit: { opacity: 0, transition: { duration: 0.2 } },
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    setFormData((prev) => ({ ...prev, photo: file }));
   };
 
-  const modalVariants = {
-    hidden: { opacity: 0, scale: 0.9, y: 50 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      transition: { duration: 0.4, ease: "easeOut" },
+  // Dynamic mutation based on role
+  const ProfileMutation = useMutation({
+    mutationFn: () =>
+      isDoctor
+        ? DoctorProfile({ token, formData })
+        : AdminProfile({ token, formData }),
+    onSuccess: () => {
+      alert("Profile updated successfully!");
+      onClose();
     },
-    exit: {
-      opacity: 0,
-      scale: 0.9,
-      y: 50,
-      transition: { duration: 0.3, ease: "easeIn" },
-    },
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    ProfileMutation.mutate();
   };
 
   return (
     <AnimatePresence>
       <motion.div
         className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
-        variants={overlayVariants}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
       >
-        <motion.div
-          className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative"
-          variants={modalVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-        >
+        <motion.div className="bg-white mt-10 rounded-lg shadow-lg w-full max-w-md p-6 relative max-h-[85vh] overflow-y-auto">
           <h2 className="text-2xl font-bold text-center text-red-600 mb-6">
-            Doctor's Account
+            Edit Profile
           </h2>
-          <motion.form
-            // onSubmit={handleSubmit}
-            className="space-y-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.4 }}
-          >
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Username
+          <motion.form onSubmit={handleSubmit} className="space-y-4">
+            {/* Profile Photo */}
+            <div className="flex flex-col items-center gap-3">
+              <div className="h-24 w-24 rounded-full border-2 border-red-400 overflow-hidden">
+                <img
+                  src={
+                    formData.photo
+                      ? URL.createObjectURL(formData.photo)
+                      : user?.photo || "https://via.placeholder.com/96"
+                  }
+                  alt="Profile"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <label className="cursor-pointer text-sm text-red-600 hover:underline">
+                Change Photo
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoChange}
+                  className="hidden"
+                />
               </label>
+            </div>
+
+            {/* Name & Age */}
+            <div className="flex gap-2">
               <input
                 type="text"
-                name="name"
-                value={formData.name}
+                name="fname"
+                value={formData.fname}
                 onChange={handleChange}
-                placeholder="Enter username"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+                placeholder="First Name"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500"
               />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email
-              </label>
               <input
-                type="email"
-                name="email"
-                value={formData.email}
+                type="text"
+                name="mname"
+                value={formData.mname}
                 onChange={handleChange}
-                placeholder="doctor@email.com"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+                placeholder="Middle Name"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Password
-              </label>
+            <div className="flex gap-2">
               <input
-                type="password"
-                name="password"
-                value={formData.password}
+                type="text"
+                name="lname"
+                value={formData.lname}
                 onChange={handleChange}
-                placeholder="••••••••"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+                placeholder="Last Name"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500"
+              />
+              <input
+                type="number"
+                name="age"
+                value={formData.age}
+                onChange={handleChange}
+                placeholder="Age"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500"
               />
             </div>
+
+            {/* Gender */}
+            <select
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500"
+            >
+              <option value="">Select gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+
+            {/* Role-based fields */}
+            {isDoctor ? (
+              <>
+                <input
+                  type="text"
+                  name="specialization"
+                  value={formData.specialization}
+                  onChange={handleChange}
+                  placeholder="Specialization"
+                  className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500"
+                />
+                <input
+                  type="number"
+                  name="consultation_fee"
+                  value={formData.consultation_fee}
+                  onChange={handleChange}
+                  placeholder="Consultation Fee"
+                  className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500"
+                />
+              </>
+            ) : (
+              <>
+                <input
+                  type="text"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  placeholder="Address"
+                  className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500"
+                />
+                <input
+                  type="text"
+                  name="contact_number"
+                  value={formData.contact_number}
+                  onChange={handleChange}
+                  placeholder="Contact Number"
+                  className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500"
+                />
+              </>
+            )}
+
+            {/* Actions */}
             <div className="flex justify-end gap-3 pt-4">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+                className="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 transition"
+                className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700"
               >
-                {/* {Create.isPending ? "Saving..." : "Save Account"} */}
+                {ProfileMutation.isPending ? "Saving..." : "Save"}
               </button>
             </div>
           </motion.form>
@@ -130,4 +199,5 @@ const AccountForm = ({ onClose }) => {
   );
 };
 
-export default AccountForm;
+
+export default ProfileSettings;

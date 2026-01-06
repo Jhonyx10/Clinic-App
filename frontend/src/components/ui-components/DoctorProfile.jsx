@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { doctorProfile } from "../util/profileApi";
 
 
-const DoctorProfile = () => {
+const DoctorProfile = ({edit}) => {
      const { user, token } = useAppStore();
 
      const { data, isLoading, isError } = useQuery({
@@ -81,7 +81,9 @@ const DoctorProfile = () => {
 
         {/* Actions */}
         <div className="mt-6">
-          <button className="w-full rounded-lg bg-red-500 text-white py-2 font-medium hover:bg-red-600 transition">
+          <button
+            onClick={edit}
+           className="w-full rounded-lg bg-red-500 text-white py-2 font-medium hover:bg-red-600 transition">
             Edit Profile
           </button>
         </div>

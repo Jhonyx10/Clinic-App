@@ -18,7 +18,8 @@ class Profile extends Model
          'age', 
          'gender', 
          'address',
-         'contact_number'
+         'contact_number',
+         'photo'
     ];
 
     public function user()

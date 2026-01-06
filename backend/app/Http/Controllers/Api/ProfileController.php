@@ -20,7 +20,7 @@ class ProfileController extends Controller
     public function doctorProfile(DoctorProfileRequest $request)
     {
         try{
-            $data = $this->profile->createDoctorProfile($request->validated());
+            $data = $this->profile->saveDoctorProfile($request->validated());
 
             return response()->json(['profile' => $data]);
         }catch (\Throwable $e) {
@@ -40,7 +40,7 @@ class ProfileController extends Controller
     public function userProfile(UserProfileRequest $request)
     {
         try {
-            $data = $this->profile->createUserProfile($request->validated());
+            $data = $this->profile->saveUserProfile($request->validated());
 
             return response()->json(['profile' => $data]);
         } catch (\Throwable $e) {

@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AppointmentController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\DoctorsLeaveController;
+use App\Http\Controllers\Api\DoctorsController;
 
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -20,6 +21,7 @@ Route::middleware(['auth:sanctum'])->group(function() {
 
     Route::middleware(['role:admin|doctor'])->group(function () {
         Route::apiResource('/doctors/leave', DoctorsLeaveController::class);
+        Route::get('/patients', [DoctorsController::class, 'getPatients']);
     });
 
     Route::middleware(['role:admin'])->group(function () {

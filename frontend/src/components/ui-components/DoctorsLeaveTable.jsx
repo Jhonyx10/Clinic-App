@@ -19,14 +19,6 @@ const DoctorsLeaveTable = () => {
     queryFn: () => leaveList(token),
   });
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-40 text-gray-500">
-        Loading leaves...
-      </div>
-    );
-  }
-
   // Apply filters
   const filteredLeave = useMemo(() => {
     return leave.filter((l) => {
@@ -42,6 +34,14 @@ const DoctorsLeaveTable = () => {
     });
   }, [leave, statusFilter, doctorFilter]);
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-40 text-gray-500">
+        Loading leaves...
+      </div>
+    );
+  }
+  
   return (
     <div className="mt-6">
       {/* Filter Bar */}

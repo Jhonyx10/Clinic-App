@@ -3,7 +3,7 @@ import useAppStore from "../store/useAppStore";
 import { useQuery } from "@tanstack/react-query";
 import { userProfile } from "../util/profileApi";
 
-const UserProfile = () => {
+const UserProfile = ({edit}) => {
   const { user, token } = useAppStore();
 
   const { data, isLoading } = useQuery({
@@ -56,7 +56,7 @@ const UserProfile = () => {
           {profile?.fname} {profile?.mname} {profile?.lname}
         </h2>
 
-        <p className="text-sm text-gray-500 capitalize">Doctor</p>
+        <p className="text-sm text-gray-500 capitalize">{user.role}</p>
       </div>
 
       {/* Divider */}
@@ -73,7 +73,9 @@ const UserProfile = () => {
 
       {/* Actions */}
       <div className="mt-6">
-        <button className="w-full rounded-lg bg-red-500 text-white py-2 font-medium hover:bg-red-600 transition">
+        <button
+          onClick={edit}
+           className="w-full rounded-lg bg-red-500 text-white py-2 font-medium hover:bg-red-600 transition">
           Edit Profile
         </button>
       </div>

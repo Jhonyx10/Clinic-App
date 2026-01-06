@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import PatientsList from "../../ui-components/PatientsTable";
 
 const Patients = () => {
   return (
@@ -8,16 +9,7 @@ const Patients = () => {
       transition={{ duration: 0.1 }}
       className="pt-4 pb-6"
     >
-      <motion.h1
-        layout
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className=" mt-10 font-medium text-2xl"
-      >
-        Patients
-      </motion.h1>
-      {/* Add more content here */}
+      <PatientsList/>
     </motion.div>
   );
 };

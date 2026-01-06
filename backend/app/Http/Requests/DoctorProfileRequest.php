@@ -14,14 +14,14 @@ class DoctorProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'fname' => 'required|string|max:255',
+            'fname' => 'nullable|string|max:255',
             'mname' => 'nullable|string|max:255',
-            'lname' => 'required|string|max:255',
-            'age' => 'required|integer|min:18',
-            'gender' => 'required|in:male,female',
-            'specialization' => 'required|string|max:255',
-            'consultation_fee' => 'required|numeric|min:0',
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'lname' => 'nullable|string|max:255',
+            'age' => 'nullable|integer|min:18',
+            'gender' => 'nullable|in:male,female',
+            'specialization' => 'nullable|string|max:255',
+            'consultation_fee' => 'nullable|numeric|min:0',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ];
     }
 }

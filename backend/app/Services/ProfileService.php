@@ -9,26 +9,30 @@ use Illuminate\Support\Facades\Storage;
 
 class ProfileService
 {
-    public function createDoctorProfile(array $data): DoctorProfile
+    public function saveDoctorProfile(array $data): DoctorProfile
     {
-        $photoPath = null;
+        $userId = auth()->id();
 
-        // Handle photo upload
+        $profile = DoctorProfile::firstOrNew(['user_id' => $userId]);
+
         if (isset($data['photo']) && $data['photo'] instanceof UploadedFile) {
-            $photoPath = $data['photo']->store('doctors', 'public');
+            if ($profile->photo) {
+                \Storage::disk('public')->delete($profile->photo);
+            }
+            $profile->photo = $data['photo']->store('doctors', 'public');
         }
 
-        return DoctorProfile::create([
-            'user_id' => auth()->id(),
-            'fname' => $data['fname'],
-            'mname' => $data['mname'] ?? null,
-            'lname' => $data['lname'],
-            'age' => $data['age'],
-            'gender' => $data['gender'],
-            'specialization' => $data['specialization'],
-            'consultation_fee' => $data['consultation_fee'],
-            'photo' => $photoPath, // store path, not file
-        ]);
+        $profile->fname = $data['fname'] ?? $profile->fname;
+        $profile->mname = $data['mname'] ?? $profile->mname;
+        $profile->lname = $data['lname'] ?? $profile->lname;
+        $profile->age = $data['age'] ?? $profile->age;
+        $profile->gender = $data['gender'] ?? $profile->gender;
+        $profile->specialization = $data['specialization'] ?? $profile->specialization;
+        $profile->consultation_fee = $data['consultation_fee'] ?? $profile->consultation_fee;
+
+        $profile->save();
+
+        return $profile;
     }
 
     public function doctorProfile()
@@ -40,34 +44,48 @@ class ProfileService
         return $data;
     }
 
-    public function createUserProfile(array $data): Profile
+    public function saveUserProfile(array $data): Profile
     {
-        $photoPath = null;
+        $userId = auth()->id();
 
-        // Handle photo upload
+        $profile = Profile::firstOrNew(['user_id' => $userId]);
+
         if (isset($data['photo']) && $data['photo'] instanceof UploadedFile) {
-            $photoPath = $data['photo']->store('users', 'public');
+            if ($profile->photo) {
+                \Storage::disk('public')->delete($profile->photo);
+            }
+            $profile->photo = $data['photo']->store('users', 'public');
         }
 
-        return Profile::create([
-            'user_id' => auth()->id(),
-            'fname' => $data['fname'],
-            'mname' => $data['mname'] ?? null,
-            'lname' => $data['lname'],
-            'age' => $data['age'],
-            'gender' => $data['gender'],
-            'address' => $data['address'],
-            'contact_number' => $data['contact_number'],
-            'photo' => $photoPath, // store path, not file
-        ]);
+        $profile->fname = $data['fname'] ?? $profile->fname;
+        $profile->mname = $data['mname'] ?? $profile->mname;
+        $profile->lname = $data['lname'] ?? $profile->lname;
+        $profile->age = $data['age'] ?? $profile->age;
+        $profile->gender = $data['gender'] ?? $profile->gender;
+        $profile->address = $data['address'] ?? $profile->address;
+        $profile->contact_number = $data['contact_number'] ?? $profile->contact_number;
+
+        $profile->save();
+
+        return $profile;
     }
 
-     public function userProfile()
-    {
-        $data = Profile::where('user_id', auth()->id())->first();
 
-        $data->photo = asset('storage/' . $data->photo);
+    public function userProfile()
+{
+    $profile = Profile::where('user_id', auth()->id())->first();
 
-        return $data;
+    if (!$profile) {
+        return null; // or return default structure
     }
+
+    if ($profile->photo) {
+        $profile->photo = asset('storage/' . $profile->photo);
+    } else {
+        $profile->photo = null;
+    }
+
+    return $profile;
+}
+
 }

@@ -45,3 +45,16 @@ export const statusUpdate = async ({token, status, id}) => {
         console.log(error);
     }
 }
+
+export const getPatients = async (token) => {
+    try {
+        const res = await axios.get(`${base_url}patients`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return res.data.patients
+    } catch (error) {
+         console.log(error);
+    }
+}

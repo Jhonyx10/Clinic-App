@@ -21,5 +21,12 @@
         {
             return Appointment::with(['doctor.doctorProfile','patient'])->where('status', 'pending')->get();
         }
+
+        public function updateStatus(int $id)
+        {
+            $data = Appointment::findOrFail($id);
+            $data->status = 'completed';
+            $data->save();
+        }
     }
     

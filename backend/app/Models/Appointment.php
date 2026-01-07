@@ -32,4 +32,14 @@ class Appointment extends Model
     {
         return $this->belongsTo(Payment::class, 'appointment_id');
     }
+
+    public function recommendation()
+    {
+        return $this->belongsTo(AppointmentRecommendation::class, 'appointment_id');
+    }
+
+    public function record()
+    {
+        return $this->belongsTo(MedicalRecord::class, 'appointment_id');
+    }
 }

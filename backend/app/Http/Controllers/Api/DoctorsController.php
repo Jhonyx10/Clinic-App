@@ -4,21 +4,36 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Services\DoctorsPatients;
+use App\Services\DoctorService;
+use App\Services\AppointmentService;
+use App\Http\Requests\MedicalRecordRequest;
+use App\Http\Requests\RecommendationRequest;
 
 class DoctorsController extends Controller
 {
-    protected $method;
+    protected $service;
 
-    public function __construct(DoctorsPatients $method)
+    public function __construct(DoctorService $service, AppointmentService $appointment)
     {
-        $this->method = $method;
+        $this->service = $service;
+        $this->appointment = $appointment;
     }
 
-    public function getPatients()
+    public function postMedicalRecord(MedicalRecordRequest $request)
     {
-        $data = $this->method->patients();
+        $data = $this->service->addMedicalRecord($request->validated());
 
-        return response()->json(['patients' => $data]);
+        $id = $data->appointment_id;
+
+        $status = $this->appointment->updateStatus($id);
+
+        return response()->json(['record' => $data]);
+    }
+
+    public function postRecommendation(RecommendationRequest $request)
+    {
+        $data = $this->service->addRecommendation($request->validated());
+
+        return response()->json(['recommendation' => $data]);
     }
 }

@@ -35,11 +35,11 @@ class Appointment extends Model
 
     public function recommendation()
     {
-        return $this->belongsTo(AppointmentRecommendation::class, 'appointment_id');
+        return $this->hasOne(AppointmentRecommendation::class, 'appointment_id');
     }
 
     public function record()
     {
-        return $this->belongsTo(MedicalRecord::class, 'appointment_id');
+        return $this->hasOne(MedicalRecord::class, 'appointment_id');
     }
 }

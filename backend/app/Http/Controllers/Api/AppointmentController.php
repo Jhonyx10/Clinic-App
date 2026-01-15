@@ -60,7 +60,9 @@ class AppointmentController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $data = $this->appointment->appointmentRecord($id);
+
+        return response()->json(['record' => $data]);
     }
 
     /**

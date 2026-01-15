@@ -3,13 +3,14 @@ import useAppStore from "../store/useAppStore";
 import { useQuery } from "@tanstack/react-query";
 import { getPatients } from "../util/doctorsApi";
 import LeaveDetails from "../modals/LeaveDetails";
+import AppointmentRecord from "../modals/AppointmentRecord";
 import { useState, useMemo } from "react";
 
 const PatientsList = () => {
   const { token, user } = useAppStore();
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedLeave, setSelectedLeave] = useState(null);
-
+  const [selectedId, setSelectedId] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState("");
   const [doctorFilter, setDoctorFilter] = useState("");
 
@@ -66,8 +67,8 @@ const PatientsList = () => {
         >
           <option value="">All Status</option>
           <option value="pending">Pending</option>
-          <option value="approved">Approved</option>
-          <option value="rejected">Rejected</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
         </select>
       </div>
 
@@ -92,6 +93,9 @@ const PatientsList = () => {
               <th className="py-3 px-4 text-left text-sm font-medium">
                 Status
               </th>
+              <th className="py-3 px-4 text-left text-sm font-medium">
+                Record
+              </th>
             </tr>
           </motion.thead>
 
@@ -103,8 +107,9 @@ const PatientsList = () => {
               const doctorAvatar =
                 doctor?.photo || "https://via.placeholder.com/150?text=Doctor";
               const patientAvatar =
-                patient?.photo || "https://via.placeholder.com/150?text=Patient";
-            
+                patient?.photo ||
+                "https://via.placeholder.com/150?text=Patient";
+
               return (
                 <motion.tr
                   key={appt.id}
@@ -180,7 +185,7 @@ const PatientsList = () => {
 
                   <td
                     className={`py-3 px-4 text-sm font-medium capitalize ${
-                      appt.status === "approved"
+                      appt.status === "completed"
                         ? "text-green-600"
                         : appt.status === "rejected"
                         ? "text-red-600"
@@ -189,6 +194,28 @@ const PatientsList = () => {
                   >
                     {appt.status}
                   </td>
+                  <td className="py-3 px-4 text-sm text-gray-700">
+                    <button
+                      disabled={appt.status === "cancelled"}
+                      onClick={() => {
+                        if (appt.status === "completed") {
+                          setIsModalOpen(true);
+                          setSelectedId(appt.id);
+                        } else {
+                          alert("Appointment is not completed yet.");
+                        }
+                      }}
+                      className="bg-red-500 px-3 py-1 rounded-md hover:cursor-pointer hover:bg-red-700"
+                    >
+                      <p className="text-sm text-white/90">
+                        {appt.status === "completed"
+                          ? "Details"
+                          : appt.status === "cancelled"
+                          ? "Cancelled"
+                          : "View"}
+                      </p>
+                    </button>
+                  </td>
                 </motion.tr>
               );
             })}
@@ -196,10 +223,10 @@ const PatientsList = () => {
         </motion.table>
       </div>
 
-      {modalOpen && selectedLeave && (
-        <LeaveDetails
-          onClose={() => setModalOpen(false)}
-          data={selectedLeave}
+      {isModalOpen && (
+        <AppointmentRecord
+          onClose={() => setIsModalOpen(false)}
+          id={selectedId}
         />
       )}
     </div>

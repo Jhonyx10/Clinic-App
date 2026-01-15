@@ -44,7 +44,15 @@ const AppointmentModal = ({ onClose, event }) => {
             </div>
             <div className="flex justify-between">
               <span className="font-semibold text-gray-700">Time:</span>
-              <span className="text-gray-900">{event.appointment_time}</span>
+              <span className="text-gray-900">
+                {new Date(
+                  `1970-01-01T${event.appointment_time}`
+                ).toLocaleTimeString("en-US", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: true,
+                })}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="font-semibold text-gray-700">Status:</span>

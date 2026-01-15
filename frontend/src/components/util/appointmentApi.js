@@ -15,3 +15,16 @@ export const appointments = async (token) => {
         console.log(error)
     }
 }
+
+export const appointmentDetails = async ({token, id}) => {
+    try {
+        const res = await axios.get(`${base_url}appointment/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return res.data.record;
+    } catch (error) {
+        console.log(error)
+    }
+}

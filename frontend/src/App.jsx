@@ -5,6 +5,7 @@ import {
 } from "@tanstack/react-query";
 import AuthNavigation from "./components/navigation/AuthNavigation";
 
+
 const queryClient = new QueryClient();
 function App() {
   return (

@@ -6,8 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\DoctorService;
 use App\Services\AppointmentService;
-use App\Http\Requests\MedicalRecordRequest;
-use App\Http\Requests\RecommendationRequest;
+use App\Http\Requests\StoreDiagnosisRequest;
 
 class DoctorsController extends Controller
 {
@@ -19,21 +18,26 @@ class DoctorsController extends Controller
         $this->appointment = $appointment;
     }
 
-    public function postMedicalRecord(MedicalRecordRequest $request)
+    public function postMedicalRecord(StoreDiagnosisRequest $request)
     {
-        $data = $this->service->addMedicalRecord($request->validated());
+        try {
+            $data = $request->validated();
 
-        $id = $data->appointment_id;
+            $medicalRecord = $this->service->addMedicalRecord($data);
 
-        $status = $this->appointment->updateStatus($id);
+            $this->service->addRecommendation($data);
 
-        return response()->json(['record' => $data]);
+            $this->appointment->updateStatus($data['appointment_id']);
+
+            return response()->json([
+                'record' => $medicalRecord
+            ]);
+
+        } catch (\Throwable $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
-    public function postRecommendation(RecommendationRequest $request)
-    {
-        $data = $this->service->addRecommendation($request->validated());
-
-        return response()->json(['recommendation' => $data]);
-    }
 }

@@ -58,3 +58,16 @@ export const getPatients = async (token) => {
          console.log(error);
     }
 }
+
+export const doctorsDiagnosis = async ({token, formData}) => {
+    try {
+        const res = await axios.post(`${base_url}doctors/diagnosis`, formData, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return res.data;
+    } catch (error) {
+         console.log(error);
+    }
+}

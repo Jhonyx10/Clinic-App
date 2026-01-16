@@ -7,6 +7,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { format, parse, startOfWeek, getDay, addHours } from "date-fns";
 import enUS from "date-fns/locale/en-US";
 import AppointmentModal from "../modals/AppointmentModal";
+import DiagnosisForm from "../forms/DiagnosisForm";
 
 const locales = { "en-US": enUS };
 const localizer = dateFnsLocalizer({
@@ -21,6 +22,8 @@ const Calendar = () => {
   const { token, user } = useAppStore();
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [diagnosisData, setDiagnosisData] = useState(null);
+  const [formOpen, setFormOpen] = useState(false)
 
   const { data } = useQuery({
     queryKey: ["appointments"],
@@ -59,11 +62,7 @@ useEffect(() => {
 }, [data, user]);
 
   const handleSelectEvent = (event) => {
-    setSelectedEvent(event.raw); // store full appointment data
-  };
-
-  const handleCloseModal = () => {
-    setSelectedEvent(null);
+    setSelectedEvent(event.raw); 
   };
 
   return (
@@ -86,7 +85,20 @@ useEffect(() => {
         })}
       />
       {selectedEvent && (
-        <AppointmentModal onClose={handleCloseModal} event={selectedEvent} />
+        <AppointmentModal
+          onClose={() => setSelectedEvent(null)}
+          event={selectedEvent}
+          openForm={(eventData) => {
+            setDiagnosisData(eventData);
+            setFormOpen(true);
+          }}
+        />
+      )}
+      {formOpen && (
+        <DiagnosisForm
+          onClose={() => setFormOpen(false)}
+          data={diagnosisData}
+        />
       )}
     </>
   );

@@ -36,8 +36,7 @@ Route::middleware(['auth:sanctum'])->group(function() {
     Route::middleware(['role:doctor'])->group(function () {
         Route::post('/doctor/profile', [ProfileController::class, 'doctorProfile']);
         Route::get('/doctor/profile', [ProfileController::class, 'getDoctorProfile']);
-        Route::post('/doctors/recommendation', [DoctorsController::class, 'postRecommendation']);
-        Route::post('/patients/medical/record', [DoctorsController::class, 'postMedicalRecord']);
+        Route::post('/doctors/diagnosis', [DoctorsController::class, 'postMedicalRecord']);
     });
 
 });

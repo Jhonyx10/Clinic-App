@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from "motion/react";
+import useAppStore from "../store/useAppStore";
 
-const AppointmentModal = ({ onClose, event }) => {
+const AppointmentModal = ({ onClose, event, openForm }) => {
+  const { user } = useAppStore();
   return (
     <AnimatePresence>
       <motion.div
@@ -30,10 +32,12 @@ const AppointmentModal = ({ onClose, event }) => {
 
           {/* Content */}
           <div className="space-y-3">
-            <div className="flex justify-between">
-              <span className="font-semibold text-gray-700">Doctor:</span>
-              <span className="text-gray-900">{event.doctor.name}</span>
-            </div>
+            {user.role !== "doctor" && (
+              <div className="flex justify-between">
+                <span className="font-semibold text-gray-700">Doctor:</span>
+                <span className="text-gray-900">{event.doctor.name}</span>
+              </div>
+            )}
             <div className="flex justify-between">
               <span className="font-semibold text-gray-700">Patient:</span>
               <span className="text-gray-900">{event.patient?.name}</span>
@@ -65,14 +69,19 @@ const AppointmentModal = ({ onClose, event }) => {
           </div>
 
           {/* Footer */}
-          <div className="mt-6 flex justify-end">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
-            >
-              Close
-            </button>
-          </div>
+          {user.role === "doctor" && (
+            <div className="mt-6 flex justify-end gap-2">
+              <button
+                onClick={() => {
+                  openForm(event);
+                  onClose();
+                }}
+                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
+              >
+                Diagnose
+              </button>
+            </div>
+          )}
         </motion.div>
       </motion.div>
     </AnimatePresence>
